@@ -9,7 +9,7 @@ const startServer = async () => {
 
     console.log("Base de datos conectada");
 
-    app.listen(PORT, "0.0.0.0", () => {
+    app.listen(PORT, () => {
       console.log(`Servidor corriendo en puerto ${PORT}`);
     });
   } catch (error) {
