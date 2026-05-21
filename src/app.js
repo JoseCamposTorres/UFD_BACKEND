@@ -20,10 +20,18 @@ app.use(
       "http://localhost:5173",
       "http://127.0.0.1:5173",
       "http://192.168.0.102:5173",
-      "https://ufdcaneteback.wolfcodetech.com", // <-- Corregido UDF
-      "https://ufdcanete.wolfcodetech.com", // <-- Corregido UDF
+
+      // Combinación UFD (La que está usando tu hosting real según el error)
+      "https://ufdcanete.wolfcodetech.com",
+      "https://ufdcaneteback.wolfcodetech.com",
+
+      // Combinación UDF (Por si acaso lo cambias en el futuro)
+      "https://udfcanete.wolfcodetech.com",
+      "https://udfcaneteback.wolfcodetech.com",
     ],
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
 
