@@ -18,17 +18,22 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-
       "http://127.0.0.1:5173",
-
       "http://192.168.0.102:5173",
+
+      "https://ufdcanete.wolfcodetech.com",
+      "https://ufdcanete.wolfcodetech.com",
     ],
 
     credentials: true,
   }),
 );
 
-app.use(helmet());
+app.use(
+  helmet({
+    crossOriginResourcePolicy: false,
+  }),
+);
 
 app.use(morgan("dev"));
 
@@ -42,7 +47,7 @@ app.use(
 
 app.use("/api/auth", authRoutes);
 app.use("/api/pnp-cases", pnpCaseRoutes);
-app.use("/api/mp-case", mpCaseRoutes); 
+app.use("/api/mp-case", mpCaseRoutes);
 app.use("/api/pj", pjCaseRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 
