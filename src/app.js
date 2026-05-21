@@ -45,6 +45,15 @@ app.use(morgan("dev"));
 
 app.use(express.json());
 
+// Ruta de prueba para verificar que el backend responde
+app.get("/", (req, res) => {
+  res.json({
+    status: "online",
+    message: "UFD Cañete Backend API v1.0.0 corriendo exitosamente en 2026",
+    timestamp: new Date(),
+  });
+});
+
 app.use(
   express.urlencoded({
     extended: true,
