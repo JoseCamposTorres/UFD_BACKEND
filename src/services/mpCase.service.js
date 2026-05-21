@@ -24,12 +24,12 @@ const getBandejaValidacion = async (searchTerm = "") => {
       },
     ],
     // Forzamos el ordenamiento usando el campo físico real de la tabla en MySQL
-    order: [["created_at", "DESC"]],
+    order: [["fecha_detencion", "ASC"]],
   });
 
   // Mapeamos los datos solucionando el formato de fecha
   const formattedCases = rawCases.map((c) => {
-    const fechaOrigen = c.createdAt;
+    const fechaOrigen = c.fecha_detencion;
 
     // Configuración estricta para asegurar la zona horaria peruana en el Front
     const opcionesFecha = {
@@ -80,7 +80,15 @@ const getBandejaValidacion = async (searchTerm = "") => {
   const totalConcluidos = await MpCase.count({
     where: {
       desenlace_mp: {
-        [Op.in]: ["Libertad", "ConclusionA", "ConclusionB"],
+        [Op.in]: [
+          "Libertad",
+          "Libertad: Principio de oportunidad",
+          "Libertad: No encontrar medios probatorios",
+          "Libertad: Acuerdo reparatorio",
+          "Libertad: Archivo de la inv. en diligencias preliminares",
+          "Libertad: No constituye delito",
+          "Otros",
+        ],
       },
     },
   });

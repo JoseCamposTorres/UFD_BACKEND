@@ -9,6 +9,8 @@ const morgan = require("morgan");
 const authRoutes = require("./routes/auth.routes");
 const pnpCaseRoutes = require("./routes/pnpCase.routes");
 const mpCaseRoutes = require("./routes/mpCase.routes");
+const pjCaseRoutes = require("./routes/pjCase.routes");
+const dashboardRoutes = require("./routes/dashboard.routes");
 
 const app = express();
 
@@ -41,4 +43,7 @@ app.use(
 app.use("/api/auth", authRoutes);
 app.use("/api/pnp-cases", pnpCaseRoutes);
 app.use("/api/mp-case", mpCaseRoutes); 
+app.use("/api/pj", pjCaseRoutes);
+app.use("/api/dashboard", dashboardRoutes);
+
 module.exports = app;
