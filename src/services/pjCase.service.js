@@ -56,9 +56,33 @@ const getBandeja = async () => {
         order: [["fecha_audiencia", "ASC"]],
       });
 
+      const fechaOrigen = mp.pnpCase?.fecha_detencion;
+
+      const opcionesFecha = {
+        timeZone: "America/Lima",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      };
+
+      const opcionesHora = {
+        timeZone: "America/Lima",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+      };
+
       return {
         mp_case_id: mp.case_pnp_id,
+
         codigo_mp: `MP-REG-${mp.case_pnp_id.substring(0, 8).toUpperCase()}`,
+        fecha_ingreso: fechaOrigen
+          ? new Date(fechaOrigen).toLocaleDateString("es-PE", opcionesFecha)
+          : "Sin Fecha",
+        hora_ingreso: fechaOrigen
+          ? new Date(fechaOrigen).toLocaleTimeString("es-PE", opcionesHora)
+          : "Sin Hora",
         imputado: mp.pnpCase?.imputado_nombres || "NO REGISTRADO",
         delito: mp.pnpCase?.delito || "NO REGISTRADO",
         fiscal_asignado: mp.fiscal_asignado || "SIN FISCAL",

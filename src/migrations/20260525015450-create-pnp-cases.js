@@ -10,18 +10,13 @@ module.exports = {
         allowNull: false,
       },
 
-      imputado_dni: {
-        type: Sequelize.STRING(8),
+      imputados: {
+        type: Sequelize.JSON,
         allowNull: false,
       },
 
-      imputado_nombres: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-
-      agraviado_nombres: {
-        type: Sequelize.STRING,
+      agraviados: {
+        type: Sequelize.JSON,
         allowNull: false,
       },
 

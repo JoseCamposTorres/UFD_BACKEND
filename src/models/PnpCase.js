@@ -1,5 +1,4 @@
 const { DataTypes } = require("sequelize");
-
 const sequelize = require("../config/database");
 
 const PnpCase = sequelize.define(
@@ -11,18 +10,13 @@ const PnpCase = sequelize.define(
       primaryKey: true,
     },
 
-    imputado_dni: {
-      type: DataTypes.STRING(8),
+    imputados: {
+      type: DataTypes.JSON,
       allowNull: false,
     },
 
-    imputado_nombres: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-
-    agraviado_nombres: {
-      type: DataTypes.STRING,
+    agraviados: {
+      type: DataTypes.JSON,
       allowNull: false,
     },
 

@@ -6,11 +6,14 @@ const PnpCase = require("../models/PnpCase");
 const getBandejaValidacion = async (searchTerm = "") => {
   let pnpWhere = {};
 
+  // Ajustamos la búsqueda reactiva para que escanee los nuevos campos JSON si es necesario,
+  // o mantenga el escaneo por ID/Referencia.
   if (searchTerm) {
     pnpWhere = {
       [Op.or]: [
-        { imputado_nombres: { [Op.like]: `%${searchTerm}%` } },
         { id: { [Op.like]: `%${searchTerm}%` } },
+        { delito: { [Op.like]: `%${searchTerm}%` } },
+        // Si mantienes campos planos de texto para búsqueda rápida, agrégalos aquí.
       ],
     };
   }
@@ -23,15 +26,13 @@ const getBandejaValidacion = async (searchTerm = "") => {
         as: "mpCase",
       },
     ],
-    // Forzamos el ordenamiento usando el campo físico real de la tabla en MySQL
     order: [["fecha_detencion", "ASC"]],
   });
 
-  // Mapeamos los datos solucionando el formato de fecha
+  // Mapeamos los datos solucionando el formato de fecha e inyectando las colecciones JSON
   const formattedCases = rawCases.map((c) => {
     const fechaOrigen = c.fecha_detencion;
 
-    // Configuración estricta para asegurar la zona horaria peruana en el Front
     const opcionesFecha = {
       timeZone: "America/Lima",
       year: "numeric",
@@ -46,29 +47,64 @@ const getBandejaValidacion = async (searchTerm = "") => {
       hour12: false,
     };
 
+    let listaImputados = [];
+    try {
+      listaImputados =
+        typeof c.imputados === "string"
+          ? JSON.parse(c.imputados)
+          : c.imputados || [];
+    } catch (e) {
+      console.error("Error al parsear imputados del caso:", c.id, e);
+    }
+
+    // 2. Parseo de Agraviados
+    let listaAgraviados = [];
+    try {
+      listaAgraviados =
+        typeof c.agraviados === "string"
+          ? JSON.parse(c.agraviados)
+          : c.agraviados || [];
+    } catch (e) {
+      console.error("Error al parsear agraviados del caso:", c.id, e);
+    }
+
     return {
       id: c.id,
       referencia_pnp: `PNP-REG-${c.id.substring(0, 8).toUpperCase()}`,
-      // Convertimos forzando America/Lima
       fecha_ingreso: fechaOrigen
         ? new Date(fechaOrigen).toLocaleDateString("es-PE", opcionesFecha)
         : "Sin Fecha",
       hora_ingreso: fechaOrigen
         ? new Date(fechaOrigen).toLocaleTimeString("es-PE", opcionesHora)
         : "Sin Hora",
-      imputado_nombres: c.imputado_nombres,
-      delito: c.delito,
+
+      // 🌟 Mandamos ambos nombres al Front-End para que uses el que prefieras sin romper nada
+      imputados: listaImputados,
+      agraviados: listaAgraviados,
+
+      // Listado unificado en formato String separado por comas para las tablas generales
+      imputado_nombres:
+        listaImputados
+          .map((d) => (d.nombres ? d.nombres.trim() : "Sin Nombre"))
+          .join(", ") || "Sin Imputados",
+      agraviado_nombres:
+        listaAgraviados
+          .map((a) => (a.nombres ? a.nombres.trim() : "Sin Nombre"))
+          .join(", ") || "Sin Agraviados",
+
       articulo: "Art. General",
       comisaria: c.comisaria_origen,
       urgente: false,
       fiscal_asignado: c.mpCase?.fiscal_asignado || "Sin Asignar",
       desenlace_mp: c.mpCase?.desenlace_mp || "",
       derivacion_pj: c.mpCase?.derivacion_pj || "",
+      actualizado_por: c.mpCase?.actualizado_por || "No registrado",
+      actualizado_por_dni: c.mpCase?.actualizado_por_dni || "",
       isEditing: false,
     };
   });
 
-  // CONTADORES
+  // CONTADORES (Métricas estáticas de bandeja)
   const totalRecibidos = await PnpCase.count();
   const totalInmediatos = await MpCase.count({
     where: { derivacion_pj: "Inmediato" },
@@ -96,7 +132,7 @@ const getBandejaValidacion = async (searchTerm = "") => {
   return {
     metrics: {
       recibidos: totalRecibidos,
-      procesosInmediatos: totalInmediatos,
+      processesInmediatos: totalInmediatos,
       procesosComunes: totalComunes,
       concluidos: totalConcluidos,
     },

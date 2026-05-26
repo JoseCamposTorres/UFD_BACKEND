@@ -3,9 +3,8 @@ const pnpCaseService = require("../services/pnpCase.service");
 const createCase = async (req, res) => {
   try {
     const {
-      imputado_dni,
-      imputado_nombres,
-      agraviado_nombres,
+      imputados,
+      agraviados,
       fecha_detencion,
       fecha_puesta_disposicion,
       comisaria_origen,
@@ -17,9 +16,8 @@ const createCase = async (req, res) => {
     const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
 
     const newCase = await pnpCaseService.createCase({
-      imputado_dni,
-      imputado_nombres,
-      agraviado_nombres,
+      imputados,
+      agraviados,
       fecha_detencion,
       fecha_puesta_disposicion,
       comisaria_origen,

@@ -1,4 +1,3 @@
-// Agregamos 'literal' aquí arriba:
 const { Op, fn, col, literal } = require("sequelize");
 const PnpCase = require("../models/PnpCase");
 
@@ -9,7 +8,7 @@ const createCase = async (data) => {
 const getDashboardStats = async () => {
   const last24Hours = new Date(Date.now() - 24 * 60 * 60 * 1000);
 
-  // 1. Total Ingresos
+  // 1. Total Ingresos de Casos
   const total24h = await PnpCase.count({
     where: {
       created_at: {
@@ -18,11 +17,11 @@ const getDashboardStats = async () => {
     },
   });
 
-  // 2. Top 3 Delitos (Aquí es donde se rompía por falta de literal)
+  // 2. Top 3 Delitos
   const topDelitos = await PnpCase.findAll({
     attributes: ["delito", [fn("COUNT", col("id")), "count"]],
     group: ["delito"],
-    order: [[literal("count"), "DESC"]], // <-- Ahora sí funcionará
+    order: [[literal("count"), "DESC"]],
     limit: 3,
     raw: true,
   });
@@ -31,7 +30,7 @@ const getDashboardStats = async () => {
   const topComisarias = await PnpCase.findAll({
     attributes: ["comisaria_origen", [fn("COUNT", col("id")), "count"]],
     group: ["comisaria_origen"],
-    order: [[literal("count"), "DESC"]], // <-- Ahora sí funcionará
+    order: [[literal("count"), "DESC"]],
     limit: 4,
     raw: true,
   });
