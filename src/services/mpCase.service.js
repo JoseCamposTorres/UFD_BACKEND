@@ -26,7 +26,7 @@ const getBandejaValidacion = async (searchTerm = "") => {
         as: "mpCase",
       },
     ],
-    order: [["fecha_detencion", "ASC"]],
+    order: [["fecha_detencion", "DESC"]],
   });
 
   // Mapeamos los datos solucionando el formato de fecha e inyectando las colecciones JSON
@@ -92,8 +92,10 @@ const getBandejaValidacion = async (searchTerm = "") => {
           .map((a) => (a.nombres ? a.nombres.trim() : "Sin Nombre"))
           .join(", ") || "Sin Agraviados",
 
+     
       articulo: "Art. General",
       comisaria: c.comisaria_origen,
+       delito: c.delito,
       urgente: false,
       fiscal_asignado: c.mpCase?.fiscal_asignado || "Sin Asignar",
       desenlace_mp: c.mpCase?.desenlace_mp || "",
