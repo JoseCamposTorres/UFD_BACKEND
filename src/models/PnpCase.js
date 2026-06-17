@@ -13,11 +13,13 @@ const PnpCase = sequelize.define(
     imputados: {
       type: DataTypes.JSON,
       allowNull: false,
+      defaultValue: [],
     },
 
     agraviados: {
       type: DataTypes.JSON,
       allowNull: false,
+      defaultValue: [],
     },
 
     fecha_detencion: {
